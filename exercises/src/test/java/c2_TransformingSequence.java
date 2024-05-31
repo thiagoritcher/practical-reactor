@@ -1,4 +1,5 @@
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.Test;
+
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
@@ -26,7 +27,7 @@ public class c2_TransformingSequence extends TransformingSequenceBase {
      */
     @Test
     public void transforming_sequence() {
-        Flux<Integer> numbersFlux = numerical_service()
+        Flux<Integer> numbersFlux = numerical_service().map(n-> n+1)
                 //todo change only this line
                 ;
 
@@ -48,7 +49,7 @@ public class c2_TransformingSequence extends TransformingSequenceBase {
         Flux<Integer> numbersFlux = numerical_service_2();
 
         //todo: do your changes here
-        Flux<String> resultSequence = null;
+        Flux<String> resultSequence = numbersFlux.map( i -> i < 0 ? "<" : i > 0 ? ">" : "=");
 
         //don't change code below
         StepVerifier.create(resultSequence)
@@ -65,8 +66,7 @@ public class c2_TransformingSequence extends TransformingSequenceBase {
     @Test
     public void cast() {
         Flux<String> numbersFlux = object_service()
-                .map(i -> (String) i); //todo: change this line only
-
+                .cast(String.class);
 
         StepVerifier.create(numbersFlux)
                     .expectNext("1", "2", "3", "4", "5")
@@ -81,6 +81,7 @@ public class c2_TransformingSequence extends TransformingSequenceBase {
     public void maybe() {
         Mono<String> result = maybe_service()
                 //todo: change this line only
+                .defaultIfEmpty("no results")
                 ;
 
         StepVerifier.create(result)
@@ -95,8 +96,7 @@ public class c2_TransformingSequence extends TransformingSequenceBase {
     @Test
     public void sequence_sum() {
         //todo: change code as you need
-        Mono<Integer> sum = null;
-        numerical_service();
+        Mono<Integer> sum = numerical_service().reduce(0, (v, s) -> v + s);
 
         //don't change code below
         StepVerifier.create(sum)
@@ -110,7 +110,7 @@ public class c2_TransformingSequence extends TransformingSequenceBase {
      */
     @Test
     public void sum_each_successive() {
-        Flux<Integer> sumEach = numerical_service()
+        Flux<Integer> sumEach = numerical_service().scan((v, s) -> v + s);
                 //todo: do your changes here
                 ;
 
